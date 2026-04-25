@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: demo
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ticketing_system}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+app:
+  jwt:
+    # ZMIEŃ NA PRODUKCJI! Generuj: openssl rand -base64 32
+    secret: c2VjcmV0LWtleS1mb3ItaGVscGRlc2stdGlja2V0aW5nLTIwMjY=
+    expiration-ms: 86400000   # 24h
+
+logging:
+  level:
+    org.hibernate.SQL: OFF
+    org.hibernate.orm.jdbc.bind: OFF
