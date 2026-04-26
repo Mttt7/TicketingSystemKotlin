@@ -21,6 +21,8 @@ class RegisterUserHandler(
 
         val user = User(
             email = command.email,
+            firstName = command.firstName,
+            lastName = command.lastName,
             password = requireNotNull(passwordEncoder.encode(command.password)) { "Password encoding failed" }
         )
 

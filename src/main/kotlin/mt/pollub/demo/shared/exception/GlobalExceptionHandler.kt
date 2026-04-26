@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.validation.FieldError
@@ -79,6 +80,16 @@ class GlobalExceptionHandler {
     ): ResponseEntity<ErrorResponse> {
         logger.warn("Optimistic locking failure: path={}, message={}", request.requestURI, e.message)
         return buildError(HttpStatus.CONFLICT, "Concurrent update conflict. Please retry.", request)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleNotReadable(
+        e: HttpMessageNotReadableException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
+        logger.warn("Malformed JSON: path={}, message={}", request.requestURI, e.mostSpecificCause?.message)
+        val message = e.mostSpecificCause?.message?.take(200) ?: "Malformed or invalid JSON request"
+        return buildError(HttpStatus.BAD_REQUEST, message, request)
     }
 
     @ExceptionHandler(Exception::class)
